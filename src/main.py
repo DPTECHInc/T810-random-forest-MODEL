@@ -11,6 +11,7 @@ def main():
     base_path = "assets/chest_xray"
     output_datas = "outputs/reports"
     output_models = "outputs/trained_models"
+    class_names = ['NORMAL', 'BACTERIA', 'VIRUS']
 
     # Load data
     data_loader = DataLoader(base_path)
@@ -22,9 +23,9 @@ def main():
     ClassDistribution.check_class_distribution(train_labels, "Training")
     ClassDistribution.detailed_class_distribution(val_labels, "Validation")
 
-    # Ensure that the training set has examples of both classes
-    if len(np.unique(train_labels)) < 2:
-        print("Training set does not contain both classes. Consider augmenting the dataset.")
+    # Ensure that the training set has examples of all classes
+    if len(np.unique(train_labels)) < 3:
+        print("Training set does not contain all classes. Consider augmenting the dataset.")
         return
 
     # Preprocess data
@@ -47,13 +48,13 @@ def main():
     rf_model.fit(train_features, train_labels)
 
     # Evaluation on validation set
-    val_roc_auc = Evaluation.evaluate_model(rf_model, val_features, val_labels, "Validation", output_datas)
+    val_roc_auc = Evaluation.evaluate_model(rf_model, val_features, val_labels, "Validation", output_datas, class_names)
 
     # Preprocess test data
     test_features, test_labels = preprocessing.preprocess_test_data(test_generator)
 
     # Evaluate model on test set
-    test_roc_auc = Evaluation.evaluate_model(rf_model, test_features, test_labels, "Test", output_datas)
+    test_roc_auc = Evaluation.evaluate_model(rf_model, test_features, test_labels, "Test", output_datas, class_names)
 
     # Save model and results
     data_saver = DataSaver()
