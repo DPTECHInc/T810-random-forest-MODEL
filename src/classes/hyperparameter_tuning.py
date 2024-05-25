@@ -3,7 +3,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import make_scorer, roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-
 class HyperparameterTuning:
     @staticmethod
     def grid_search_hyperparameters(train_features, train_labels):

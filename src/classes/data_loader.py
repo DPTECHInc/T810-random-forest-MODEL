@@ -2,6 +2,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, i
 import os
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from tensorflow.keras.utils import to_categorical
 
 class DataLoader:
     def __init__(self, directory_path, image_size=(64, 64), batch_size=500):
@@ -46,7 +47,8 @@ class DataLoader:
     def encode_labels(self, labels):
         encoder = LabelEncoder()
         labels_encoded = encoder.fit_transform(labels)
-        return labels_encoded
+        labels_categorical = to_categorical(labels_encoded)
+        return labels_categorical
 
     def load_train_images(self):
         return self.load_images_from_directory('train', 'training')
