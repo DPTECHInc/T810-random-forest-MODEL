@@ -6,7 +6,7 @@ from classes.preprocessing import Preprocessing
 from classes.hyperparameter_tuning import HyperparameterTuning
 from classes.evaluation import Evaluation
 from classes.random_forest_model import RandomForestModel
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 import json
 
 def main():
@@ -42,11 +42,9 @@ def main():
     val_labels_single = np.argmax(val_labels, axis=1)
     test_labels_single = np.argmax(test_labels, axis=1)
 
-    # Split training data for cross-validation
-    X_train, X_val, y_train, y_val = train_test_split(train_features, train_labels_single, test_size=0.2, random_state=42)
-
-    # Grid search for hyperparameters with cross-validation
-    best_params, best_score = HyperparameterTuning.grid_search_hyperparameters(X_train, y_train)
+    # Grid search for hyperparameters with stratified cross-validation
+    skf = StratifiedKFold(n_splits=5)
+    best_params, best_score = HyperparameterTuning.grid_search_hyperparameters(train_features, train_labels_single, cv=skf)
 
     # Train the best model on full training set
     rf_model = RandomForestModel(
@@ -59,8 +57,8 @@ def main():
     )
     rf_model.fit(train_features, train_labels_single)
 
-    # Evaluation on validation set using cross-validation
-    val_roc_auc_cv = cross_val_score(rf_model.model, X_val, y_val, cv=5, scoring='roc_auc_ovr').mean()
+    # Evaluation on validation set using stratified cross-validation
+    val_roc_auc_cv = cross_val_score(rf_model.model, val_features, val_labels_single, cv=skf, scoring='roc_auc_ovr').mean()
 
     # Evaluation on validation set (simple split)
     val_roc_auc = Evaluation.evaluate_model(rf_model, val_features, val_labels_single, "Validation", output_datas, class_names)

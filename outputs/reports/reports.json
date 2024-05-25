@@ -1,0 +1,86 @@
+{
+    "run_1": {
+        "train_roc_auc": 0.5547026812849598,
+        "val_roc_auc": 0.5625,
+        "test_roc_auc": 0.5081196581196581
+    },
+    "run_2": {
+        "train_roc_auc": 0.4844074844074845,
+        "val_roc_auc": 0.5,
+        "test_roc_auc": 0.4807692307692308
+    },
+    "run_3": {
+        "train_roc_auc": 0.6074324324324324,
+        "val_roc_auc": 0.4375,
+        "test_roc_auc": 0.5158119658119658
+    },
+    "run_4": {
+        "train_roc_auc": 0.5629390713790714,
+        "val_roc_auc": 0.5625,
+        "test_roc_auc": 0.5111111111111111
+    },
+    "run_5": {
+        "train_roc_auc": 0.5901172834372834,
+        "val_roc_auc": 0.375,
+        "test_roc_auc": 0.4897435897435898
+    },
+    "run_6": {
+        "train_roc_auc": 0.618981018981019,
+        "val_roc_auc": 0.625,
+        "test_roc_auc": 0.4752136752136752
+    },
+    "run_7": {
+        "train_roc_auc": 0.5410767543859649,
+        "val_roc_auc": 0.5,
+        "test_roc_auc": 0.49786324786324787
+    },
+    "run_8": {
+        "train_roc_auc": 0.8981324502348235,
+        "val_roc_auc": null,
+        "test_roc_auc": null
+    },
+    "run_9": {
+        "train_roc_auc": 0.8979092502023814,
+        "val_roc_auc": null,
+        "test_roc_auc": null
+    },
+    "run_10": {
+        "train_roc_auc": NaN,
+        "val_roc_auc": null,
+        "test_roc_auc": null
+    },
+    "run_11": {
+        "train_roc_auc": 0.898973887695162,
+        "val_roc_auc": null,
+        "test_roc_auc": null
+    },
+    "run_12": {
+        "train_roc_auc": 0.8984488735663685,
+        "val_roc_auc": null,
+        "test_roc_auc": null
+    },
+    "run_13": {
+        "train_roc_auc": 0.896706338274649,
+        "val_roc_auc_cv": 0.8627629100892651,
+        "val_roc_auc": 0.921875,
+        "test_roc_auc": 0.1129466293939978
+    },
+    "run_14": {
+        "train_roc_auc": 0.883732411057536,
+        "val_roc_auc_cv": 0.7,
+        "val_roc_auc": 0.9140625,
+        "test_roc_auc": 0.11228391491549386
+    },
+    "run_15": {
+        "train_roc_auc": 0.8852369781453444,
+        "val_roc_auc_cv": 0.611111111111111,
+        "val_roc_auc": 0.9419473772414949,
+        "test_roc_auc": 0.11394672578883105
+    },
+    "run_16": {
+        "train_roc_auc": 0.8844292112251335,
+        "val_roc_auc_cv": 0.870760348583878,
+        "val_roc_auc": 0.9872141116121854,
+        "test_roc_auc": 0.11525608894029947
+    }
+}
