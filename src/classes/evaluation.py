@@ -8,13 +8,10 @@ class Evaluation:
 
     @staticmethod
     def evaluate_model(model, features, labels, set_name, output_path, class_names):
-        # Prévoir les probabilités
         y_pred_proba = model.predict_proba(features)
 
-        # Convertir les labels en format binaire
         labels_binarized = label_binarize(labels, classes=[0, 1, 2])
 
-        # Calculer le score ROC-AUC pour chaque classe
         roc_auc_dict = {}
         for i in range(len(class_names)):
             if len(np.unique(labels_binarized[:, i])) == 1:
@@ -22,13 +19,11 @@ class Evaluation:
                 continue
             roc_auc_dict[class_names[i]] = roc_auc_score(labels_binarized[:, i], y_pred_proba[:, i])
 
-        # Calculer la moyenne des scores ROC-AUC (macro-average)
         if roc_auc_dict:
             macro_roc_auc = np.mean(list(roc_auc_dict.values()))
         else:
             macro_roc_auc = None
 
-        # Sauvegarder les courbes ROC
         Evaluation.save_roc_curves(labels_binarized, y_pred_proba, set_name, output_path, class_names)
 
         print(f"{set_name} ROC-AUC scores: {roc_auc_dict}")

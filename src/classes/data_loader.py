@@ -4,16 +4,31 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
+
 class DataLoader:
-    def __init__(self, directory_path, image_size=(64, 64), batch_size=500):
-        self.directory_path = directory_path
+    def __init__(self, base_path, image_size=(150, 150), batch_size=32):
+        self.base_path = base_path
         self.image_size = image_size
         self.batch_size = batch_size
-        self.datagen = ImageDataGenerator(rescale=1. / 255)
+        self.datagen = ImageDataGenerator(
+            rotation_range=20,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            fill_mode='nearest'
+        )
+
+    def load_image(self, file_path):
+        image = load_img(file_path, target_size=self.image_size)
+        image = img_to_array(image)
+        image /= 255.0  # Normaliser les pixels entre 0 et 1
+        return image
 
     def load_images_from_directory(self, subdir, set_name):
         images, labels = [], []
-        subdir_path = os.path.join(self.directory_path, subdir)
+        subdir_path = os.path.join(self.base_path, subdir)
 
         for class_name in ['NORMAL', 'PNEUMONIA']:
             class_dir = os.path.join(subdir_path, class_name)
@@ -32,17 +47,11 @@ class DataLoader:
         images = np.array(images)
         labels = np.array(labels)
 
-        # Convert labels to categorical
+        # Convertir les étiquettes en catégories
         labels = self.encode_labels(labels)
 
         print(f"Found {len(images)} images in the {set_name} set.")
         return images, labels
-
-    def load_image(self, file_path):
-        image = load_img(file_path, target_size=self.image_size)
-        image = img_to_array(image)
-        image /= 255.0
-        return image
 
     def encode_labels(self, labels):
         encoder = LabelEncoder()
@@ -51,19 +60,13 @@ class DataLoader:
         return labels_categorical
 
     def load_train_images(self):
-        return self.load_images_from_directory('train', 'training')
+        train_images, train_labels = self.load_images_from_directory('train', 'training')
+        train_images_augmented = self.datagen.flow(train_images, train_labels, batch_size=len(train_images),
+                                                   shuffle=False)
+        return next(train_images_augmented)
 
     def load_val_images(self):
         return self.load_images_from_directory('val', 'validation')
 
     def load_test_images(self):
-        generator = self.datagen.flow_from_directory(
-            directory=os.path.join(self.directory_path, 'test'),
-            target_size=self.image_size,
-            batch_size=self.batch_size,
-            class_mode='categorical',
-            shuffle=False
-        )
-        images, labels = next(generator)
-        print(f"Found {generator.samples} images in the test set belonging to {generator.num_classes} classes.")
-        return images, labels
+        return self.load_images_from_directory('test', 'test')

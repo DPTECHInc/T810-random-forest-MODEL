@@ -1,16 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class ClassDistribution:
 
-    @staticmethod
-    def check_class_distribution(labels, set_name):
-        unique, counts = np.unique(labels, return_counts=True)
-        distribution = dict(zip(unique, counts))
-        print(f"Class distribution in {set_name} set: {distribution}")
 
     @staticmethod
-    def detailed_class_distribution(labels, set_name):
+    def detailed_class_distribution(labels, set_name, run_number):
         class_labels = {0: 'NORMAL', 1: 'BACTERIA', 2: 'VIRUS'}
         unique, counts = np.unique(labels, return_counts=True)
 
@@ -24,6 +20,6 @@ class ClassDistribution:
         plt.xlabel('Classes')
         plt.ylabel('Counts')
         plt.title(f'Class Distribution in {set_name} Set')
-        plt.savefig(f'outputs/reports/{set_name.lower()}_class_distribution.png')
+        plt.savefig(f'outputs/reports/run_{run_number}/{set_name.lower()}_class_distribution.png')
         plt.close()
         print(f"Detailed class distribution in {set_name} set: {distribution}")
