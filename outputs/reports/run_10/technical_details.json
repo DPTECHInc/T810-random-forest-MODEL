@@ -1,0 +1,12 @@
+{
+    "best_hyperparameters": {
+        "n_estimators": 600,
+        "min_samples_split": 5,
+        "min_samples_leaf": 2,
+        "max_features": "sqrt",
+        "max_depth": 30
+    },
+    "cross_validation_scores": 0.8366296296296298,
+    "validation_scores": 0.8150991772706476,
+    "test_scores": 0.720550081497061
+}
