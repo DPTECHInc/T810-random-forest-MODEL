@@ -1,6 +1,5 @@
-from sklearn.ensemble import RandomForestClassifier
 import joblib
-
+from sklearn.ensemble import RandomForestClassifier
 
 class RandomForestModel:
     def __init__(self, n_estimators=100, max_features='auto', max_depth=None, min_samples_split=2, min_samples_leaf=1,
@@ -23,10 +22,11 @@ class RandomForestModel:
     def predict_proba(self, X):
         return self.model.predict_proba(X)
 
-    def save(self, model_path):
-        joblib.dump(self.model, model_path)
+    def save(self, path):
+        joblib.dump(self.model, path)
 
-    @staticmethod
-    def load(model_path):
-        model = joblib.load(model_path)
-        return model
+    def load(self, path):
+        self.model = joblib.load(path)
+
+    def get_params(self):
+        return self.model.get_params()

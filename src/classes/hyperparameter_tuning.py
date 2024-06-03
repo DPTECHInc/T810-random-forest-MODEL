@@ -7,11 +7,11 @@ class HyperparameterTuning:
     @staticmethod
     def randomized_search_hyperparameters(features, labels, cv):
         param_dist = {
-            'n_estimators': [100, 200, 400, 800],
-            'max_features': ['sqrt', 'log2'],
-            'max_depth': [10, 20, 30, None],
-            'min_samples_split': [2, 5, 10],
-            'min_samples_leaf': [1, 2, 4]
+            'n_estimators': [200, 400, 600],
+            'max_features': ['sqrt', 'log2', 0.3],
+            'max_depth': [10, 20, 30],
+            'min_samples_split': [5, 10, 15],
+            'min_samples_leaf': [2, 4, 6]
         }
         rf = RandomForestClassifier(random_state=42)
         random_search = RandomizedSearchCV(

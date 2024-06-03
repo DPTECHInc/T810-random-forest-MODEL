@@ -62,10 +62,12 @@ def main():
     best_score = None
 
     # Load or train the model
+    rf_model = RandomForestModel()
     if os.path.exists(model_path) and os.path.exists(pca_path):
         # Load the model and PCA
-        rf_model = joblib.load(model_path)
+        rf_model.load(model_path)
         preprocessing.pca = joblib.load(pca_path)
+        best_params = rf_model.get_params()
         print("Loaded existing model and PCA.")
     else:
         # Hyperparameter tuning with RandomizedSearchCV
@@ -89,7 +91,7 @@ def main():
         print("Trained and saved new model and PCA.")
 
     # Evaluation on validation set using stratified cross-validation
-    val_roc_auc_cv = cross_val_score(rf_model, val_features, val_labels_single, cv=skf, scoring='roc_auc_ovr').mean()
+    val_roc_auc_cv = cross_val_score(rf_model.model, val_features, val_labels_single, cv=skf, scoring='roc_auc_ovr').mean()
 
     # Collect evaluation results
     train_y_true, train_y_score = train_labels_single, rf_model.predict_proba(train_features)
@@ -97,15 +99,15 @@ def main():
     test_y_true, test_y_score = test_labels_single, rf_model.predict_proba(test_features)
 
     # Evaluation on validation set (simple split)
-    val_roc_auc = Evaluation.evaluate_model(rf_model, val_features, val_labels_single, "Validation", run_folder,
+    val_roc_auc = Evaluation.evaluate_model(rf_model.model, val_features, val_labels_single, "Validation", run_folder,
                                             class_names)
 
     # Evaluate model on test set
-    test_roc_auc = Evaluation.evaluate_model(rf_model, test_features, test_labels_single, "Test", run_folder,
+    test_roc_auc = Evaluation.evaluate_model(rf_model.model, test_features, test_labels_single, "Test", run_folder,
                                              class_names)
 
     # Evaluate model on training set
-    train_roc_auc = Evaluation.evaluate_model(rf_model, train_features, train_labels_single, "Training", run_folder,
+    train_roc_auc = Evaluation.evaluate_model(rf_model.model, train_features, train_labels_single, "Training", run_folder,
                                               class_names)
 
     # Save model and results
@@ -150,7 +152,7 @@ def main():
         'val_roc_auc_cv': val_roc_auc_cv,
         'val_roc_auc': val_roc_auc,
         'test_roc_auc': test_roc_auc
-    }, run_folder, train_y_true, train_y_score, val_y_true, val_y_score, test_y_true, test_y_score)
+    }, run_folder)
 
 
 if __name__ == "__main__":
