@@ -1,24 +1,22 @@
-from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV
+import numpy as np
 
 
 class HyperparameterTuning:
 
-    @staticmethod
-    def randomized_search_hyperparameters(features, labels, cv):
-        param_dist = {
-            'n_estimators': [200, 400, 600],
-            'max_features': ['sqrt', 'log2', 0.3],
-            'max_depth': [10, 20, 30],
-            'min_samples_split': [5, 10, 15],
-            'min_samples_leaf': [2, 4, 6]
-        }
+    def randomized_search_hyperparameters(self, features, labels, cv, param_dist, scoring):
         rf = RandomForestClassifier(random_state=42)
+
+        total_space_size = np.prod([len(v) for v in param_dist.values()])
+
+        n_iter = min(100, total_space_size)
+
         random_search = RandomizedSearchCV(
             estimator=rf,
             param_distributions=param_dist,
-            n_iter=100,
-            scoring='roc_auc_ovr',
+            n_iter=n_iter,
+            scoring=scoring,
             cv=cv,
             verbose=2,
             random_state=42,

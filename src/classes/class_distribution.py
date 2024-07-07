@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 
 class ClassDistribution:
-
-
     @staticmethod
     def detailed_class_distribution(labels, set_name, run_number):
         class_labels = {0: 'NORMAL', 1: 'BACTERIA', 2: 'VIRUS'}
@@ -20,6 +19,12 @@ class ClassDistribution:
         plt.xlabel('Classes')
         plt.ylabel('Counts')
         plt.title(f'Class Distribution in {set_name} Set')
-        plt.savefig(f'outputs/reports/run_{run_number}/{set_name.lower()}_class_distribution.png')
-        plt.close()
+
+        # Ensure the directory exists before saving the figure
+        output_dir = f'outputs/reports/run_{run_number}'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        plt.savefig(os.path.join(output_dir, f'{set_name.lower()}_class_distribution.png'))
+        plt.show()
         print(f"Detailed class distribution in {set_name} set: {distribution}")

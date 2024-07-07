@@ -1,17 +1,17 @@
 import numpy as np
 from skimage.feature import hog
-from skimage.color import rgb2gray
-
 
 class FeatureExtractor:
     def extract_features(self, images):
         features = []
-        for i, image in enumerate(images):
+        for idx, img in enumerate(images):
             try:
-                print(f"Processing image {i + 1}/{len(images)}")
-                image = rgb2gray(image)  # Convert to grayscale
-                feature = hog(image, pixels_per_cell=(8, 8), cells_per_block=(2, 2), feature_vector=True)
-                features.append(feature)
+                # Ensure the image is grayscale and in 2D
+                if img.ndim == 3 and img.shape[-1] == 1:
+                    img = img[:, :, 0]
+                # Compute HOG features
+                hog_features = hog(img, pixels_per_cell=(8, 8), cells_per_block=(2, 2), feature_vector=True)
+                features.append(hog_features)
             except Exception as e:
-                print(f"Error processing image at index {i}: {str(e)}")
+                print(f"Error processing image at index {idx}: {e}")
         return np.array(features)

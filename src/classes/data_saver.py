@@ -31,7 +31,6 @@ class DataSaver:
 
         with open(path, 'w') as f:
             json.dump(previous_results, f, indent=4)
-        print(f"Les résultats de {results_key} ont été sauvegardés avec succès.")
 
     def save_model(self, model, path="outputs/models/random_forest_model.pkl"):
         os.makedirs(os.path.dirname(path), exist_ok=True)

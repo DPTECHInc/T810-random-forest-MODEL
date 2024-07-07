@@ -1,6 +1,0 @@
-{
-    "best_hyperparameters": "Loaded model, no hyperparameter tuning performed",
-    "cross_validation_scores": 0.8627864923747277,
-    "validation_scores": 0.47663820291184383,
-    "test_scores": 0.4147927911581899
-}
