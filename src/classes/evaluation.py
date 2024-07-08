@@ -1,41 +1,40 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_auc_score, roc_curve, auc, accuracy_score, f1_score
+from sklearn.metrics import roc_auc_score, roc_curve, auc, accuracy_score, f1_score, recall_score, \
+    classification_report, confusion_matrix
 from sklearn.preprocessing import label_binarize
+import seaborn as sns
+
 
 class Evaluation:
 
     @staticmethod
     def evaluate_model(model, features, labels, set_name, output_path, class_names, metric="roc_auc_ovr"):
-        if metric == 'accuracy':
-            y_pred = model.predict(features)
-            accuracy = accuracy_score(labels, y_pred)
-            Evaluation.save_accuracy_curve(labels, y_pred, set_name, output_path)
-            return accuracy
-        elif metric == 'f1':
-            y_pred = model.predict(features)
-            f1 = f1_score(labels, y_pred, average='macro')
-            return f1
-        else:
-            y_pred_proba = model.predict_proba(features)
-            labels_binarized = label_binarize(labels, classes=[0, 1, 2])
+        y_pred = model.predict(features)
+        y_pred_proba = model.predict_proba(features)
 
-            roc_auc_dict = {}
-            for i in range(len(class_names)):
-                if len(np.unique(labels_binarized[:, i])) == 1:
-                    print(f"Skipping class {class_names[i]} due to only one class present in y_true.")
-                    continue
-                roc_auc_dict[class_names[i]] = roc_auc_score(labels_binarized[:, i], y_pred_proba[:, i])
+        # Calcul des métriques
+        accuracy = accuracy_score(labels, y_pred)
+        f1 = f1_score(labels, y_pred, average='macro')
+        recall = recall_score(labels, y_pred, average='macro')
+        roc_auc = roc_auc_score(label_binarize(labels, classes=range(len(class_names))), y_pred_proba, average='macro',
+                                multi_class='ovr')
 
-            if roc_auc_dict:
-                macro_roc_auc = np.mean(list(roc_auc_dict.values()))
-            else:
-                macro_roc_auc = None
+        # Sauvegarder les courbes et le rapport de classification
+        Evaluation.save_roc_curves(labels, y_pred_proba, set_name, output_path, class_names)
+        Evaluation.save_accuracy_curve(labels, y_pred, set_name, output_path)
+        Evaluation.save_classification_report(labels, y_pred, set_name, output_path, class_names)
+        Evaluation.save_confusion_matrix(labels, y_pred, set_name, output_path, class_names)
 
-            Evaluation.save_roc_curves(labels_binarized, y_pred_proba, set_name, output_path, class_names)
+        metrics = {
+            'accuracy': accuracy,
+            'f1_score': f1,
+            'recall': recall,
+            'roc_auc': roc_auc
+        }
 
-            return macro_roc_auc
+        return metrics
 
     @staticmethod
     def adjust_threshold(model, features, labels, output_path, step=0.01):
@@ -57,7 +56,8 @@ class Evaluation:
         return best_threshold, best_accuracy
 
     @staticmethod
-    def save_roc_curves(labels_binarized, y_pred_proba, set_name, output_path, class_names):
+    def save_roc_curves(labels, y_pred_proba, set_name, output_path, class_names):
+        labels_binarized = label_binarize(labels, classes=range(len(class_names)))
         plt.figure()
         for i, class_name in enumerate(class_names):
             if len(np.unique(labels_binarized[:, i])) == 1:
@@ -89,4 +89,26 @@ class Evaluation:
         plt.legend(loc="lower right")
         os.makedirs(output_path, exist_ok=True)
         plt.savefig(os.path.join(output_path, f'{set_name}_accuracy_curve.png'))
+        plt.close()
+
+    @staticmethod
+    def save_classification_report(labels, y_pred, set_name, output_path, class_names):
+        report = classification_report(labels, y_pred, target_names=class_names, output_dict=True)
+        report_path = os.path.join(output_path, f'{set_name}_classification_report.txt')
+        with open(report_path, 'w') as file:
+            for class_name, metrics in report.items():
+                file.write(f"{class_name}:\n")
+                for metric, value in metrics.items():
+                    file.write(f"  {metric}: {value:.4f}\n")
+                file.write("\n")
+
+    @staticmethod
+    def save_confusion_matrix(labels, y_pred, set_name, output_path, class_names):
+        cm = confusion_matrix(labels, y_pred)
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.title(f'Confusion Matrix - {set_name} Set')
+        plt.savefig(os.path.join(output_path, f'{set_name}_confusion_matrix.png'))
         plt.close()
